@@ -10,7 +10,9 @@ public interface UserService {
     User save(User user);
 
 
-    Optional<User> getUserById(long id);
+    User findById(long id);
+
+    User findByFirstName(String firstName);
 
     List<User> getAll();
 }

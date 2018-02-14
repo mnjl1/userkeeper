@@ -22,8 +22,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Optional<User> getUser(@PathVariable("id") long id){
-        return userService.getUserById(id);
+    public User getUser(@PathVariable("id") long id){
+
+        return userService.findById(id);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
