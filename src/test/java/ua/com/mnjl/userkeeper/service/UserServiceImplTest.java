@@ -34,7 +34,7 @@ public class UserServiceImplTest {
 
         when(userRepository.getOne(1L)).thenReturn(user);
 
-        User result = userService.findById(1);
+        User result = userService.findById(1L);
 
         assertEquals(user, result);
 

@@ -6,7 +6,6 @@ import ua.com.mnjl.userkeeper.model.User;
 import ua.com.mnjl.userkeeper.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -18,17 +17,19 @@ public class UserController {
     @GetMapping
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public  List<User> getAll(){
+
         return userService.getAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public User getUser(@PathVariable("id") long id){
+    public User getUser(@PathVariable("id") Long id){
 
         return userService.findById(id);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public User createUser(@RequestBody User user){
+
          return userService.save(user);
     }
 }
