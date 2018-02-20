@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
@@ -14,7 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.mnjl.userkeeper.model.User;
 import ua.com.mnjl.userkeeper.repository.UserRepository;
+import ua.com.mnjl.userkeeper.service.UserService;
+
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,38 +27,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
 
-    private MockMvc mvc;
-
-
     @Mock
-    private UserRepository userRepository;
+    UserService userService;
 
     @InjectMocks
-    private UserController userController;
-
-    private JacksonTester<User> jacksonTester;
+    UserController userController;
 
     @Before
     public void setup(){
-        JacksonTester.initFields(this, new ObjectMapper());
-
-        mvc = MockMvcBuilders.standaloneSetup(userController).build();
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void findByIdTest() throws Exception {
 
-        User user = new User(1, "Dmytro",
-                "Manzhula", "dmytromr", "12345");
+        User user = new User(1, "Dmytro", "Manzhula", "dmytromr", "12345");
+        when(userService.findById(1L)).thenReturn(user);
 
-        given(userRepository.getOne((long) 1)).willReturn(new User(1, "Dmytro",
-                "Manzhula", "dmytromr", "12345"));
+        User resultUser = userController.getUser(1L);
 
-        when(userRepository.getOne((long) 1)).thenReturn(user);
+        assertEquals(user, resultUser);
 
-        MockHttpServletResponse response = mvc.perform(get("/1")
-                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-       assertThat(response.getContentAsString()).isEqualTo(jacksonTester.write(user).getJson());
     }
 }
