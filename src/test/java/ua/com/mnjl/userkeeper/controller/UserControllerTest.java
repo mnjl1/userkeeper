@@ -1,65 +1,48 @@
 package ua.com.mnjl.userkeeper.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import ua.com.mnjl.userkeeper.UserkeeperApplication;
 import ua.com.mnjl.userkeeper.model.User;
-import ua.com.mnjl.userkeeper.repository.UserRepository;
 import ua.com.mnjl.userkeeper.service.UserService;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(classes = UserkeeperApplication.class)
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@WebMvcTest(UserController.class)
 public class UserControllerTest {
 
-
+    @Autowired
     private MockMvc mockMvc;
 
-    private User user;
-
-    @Mock
+    @MockBean
     private UserService userService;
 
     @InjectMocks
     private UserController userController;
 
-
     @Before
-    public void setup() throws  Exception{
+    public void setup() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void findByIdTest() throws Exception {
+    public void findByIdTest() {
 
        User user = new User(1, "Dmytro", "Manzhula", "dmytromr", "12345");
         when(userService.findById(1L)).thenReturn(user);
@@ -71,13 +54,11 @@ public class UserControllerTest {
 
     @Test
     public void findByIdUrlTest() throws Exception {
-        User user = new User(1, "Dmytro", "Manzhula", "dmytromr", "12345");
 
-        when(userController.getUser(1L)).thenReturn(user);
+        given(this.userController.getUser(1L)).willReturn(new User(1, "Dmytro", "Manzhula",
+                "dmytromr", "12345"));
 
-
-        mockMvc.perform(get("/user/{id}", 1L)).andExpect(status().isOk()) // в этой строке java.lang.NullPointerException
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON.getType()))
-                .andExpect((ResultMatcher) jsonPath("$[1].id", is(1)));
+        this.mockMvc.perform(get("/user/1").accept(MediaType.APPLICATION_JSON_UTF8))
+                    .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 }
