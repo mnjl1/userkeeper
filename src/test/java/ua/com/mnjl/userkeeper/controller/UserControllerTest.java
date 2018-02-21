@@ -47,7 +47,7 @@ public class UserControllerTest {
        User user = new User(1, "Dmytro", "Manzhula", "dmytromr", "12345");
         when(userService.findById(1L)).thenReturn(user);
 
-        User resultUser = userController.getUser(1L);
+        User resultUser = userService.findById(1L);
 
         assertEquals(user, resultUser);
     }
