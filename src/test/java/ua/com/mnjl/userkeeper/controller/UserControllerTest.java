@@ -47,7 +47,7 @@ public class UserControllerTest {
        User user = new User(1, "Dmytro", "Manzhula", "dmytromr", "12345");
         when(userService.findById(1L)).thenReturn(user);
 
-        User resultUser = userService.findById(1L);
+        User resultUser = userController.getUser(1L);
 
         assertEquals(user, resultUser);
     }
@@ -55,7 +55,7 @@ public class UserControllerTest {
     @Test
     public void findByIdUrlTest() throws Exception {
 
-        given(this.userController.getUser(1L)).willReturn(new User(1, "Dmytro", "Manzhula",
+        given(this.userService.findById(1L)).willReturn(new User(1, "Dmytro", "Manzhula",
                 "dmytromr", "12345"));
 
         this.mockMvc.perform(get("/user/1").accept(MediaType.APPLICATION_JSON_UTF8))
